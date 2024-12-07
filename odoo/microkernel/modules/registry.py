@@ -284,7 +284,7 @@ class Registry(Mapping):
         and registers them in the registry.
 
         """
-        from .. import models
+        from ... import models
 
         # clear cache to ensure consistency, but do not signal it
         for cache in self.__caches.values():

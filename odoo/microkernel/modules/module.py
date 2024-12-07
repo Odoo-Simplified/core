@@ -137,7 +137,10 @@ def initialize_sys_path():
             odoo.addons.__path__.append(ad)
 
     # hook odoo.addons on base module path
-    base_path = os.path.normcase(os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'addons')))
+    # 这里有问题，因为它使用的是绝对路径向上取目录。而不是真正的寻找目录
+    search_path = os.path.dirname(os.path.dirname(__file__))
+    search_path = os.path.dirname(os.path.dirname(search_path))
+    base_path = os.path.normcase(os.path.abspath(os.path.join(search_path, 'addons')))
     if base_path not in odoo.addons.__path__ and os.path.isdir(base_path):
         odoo.addons.__path__.append(base_path)
 

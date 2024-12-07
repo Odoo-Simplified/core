@@ -80,7 +80,8 @@ class IrModule(models.Model):
         terp = {}
         manifest_path = next((opj(path, name) for name in MANIFEST_NAMES if os.path.exists(opj(path, name))), None)
         if manifest_path:
-            with file_open(manifest_path, 'rb', env=self.env) as f:
+            temporary_paths = self.env.transaction._Transaction__file_open_tmp_paths if self.env else ()
+            with file_open(manifest_path, 'rb', temporary_paths=temporary_paths) as f:
                 terp.update(ast.literal_eval(f.read().decode()))
         if not terp:
             return False
@@ -135,7 +136,8 @@ class IrModule(models.Model):
                     noupdate = True
                 pathname = opj(path, filename)
                 idref = {}
-                with file_open(pathname, 'rb', env=self.env) as fp:
+                temporary_paths = self.env.transaction._Transaction__file_open_tmp_paths if self.env else ()
+                with file_open(pathname, 'rb', temporary_paths=temporary_paths) as fp:
                     if ext == '.csv':
                         convert_csv_import(self.env, module, pathname, fp.read(), idref, mode, noupdate)
                     elif ext == '.sql':
@@ -156,7 +158,8 @@ class IrModule(models.Model):
             for root, dirs, files in os.walk(path_static):
                 for static_file in files:
                     full_path = opj(root, static_file)
-                    with file_open(full_path, 'rb', env=self.env) as fp:
+                    temporary_paths = self.env.transaction._Transaction__file_open_tmp_paths if self.env else ()
+                    with file_open(full_path, 'rb', temporary_paths=temporary_paths) as fp:
                         data = base64.b64encode(fp.read())
                     url_path = '/{}{}'.format(module, full_path.split(path)[1].replace(os.path.sep, '/'))
                     if not isinstance(url_path, str):
@@ -281,8 +284,9 @@ class IrModule(models.Model):
                 for manifest in manifest_files:
                     manifest_path = z.extract(manifest, module_dir)
                     mod_name = manifest.filename.split('/')[0]
+                    temporary_paths = self.env.transaction._Transaction__file_open_tmp_paths if self.env else ()
                     try:
-                        with file_open(manifest_path, 'rb', env=self.env) as f:
+                        with file_open(manifest_path, 'rb', temporary_paths=temporary_paths) as f:
                             terp = ast.literal_eval(f.read().decode())
                     except Exception:
                         continue

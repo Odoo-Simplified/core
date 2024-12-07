@@ -6,6 +6,8 @@ from contextlib import suppress
 import odoo
 import logging
 
+from odoo.technology import utils as tech_utils
+
 _logger = logging.getLogger(__name__)
 
 def get_installed_modules(cursor):
@@ -21,7 +23,7 @@ def get_neutralization_queries(modules):
     for module in modules:
         filename = f'{module}/data/neutralize.sql'
         with suppress(FileNotFoundError):
-            with odoo.tools.misc.file_open(filename) as file:
+            with tech_utils.file_open(filename) as file:
                 yield file.read().strip()
 
 def neutralize_database(cursor):

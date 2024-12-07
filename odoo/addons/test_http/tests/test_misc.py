@@ -11,6 +11,7 @@ from odoo.technology.framework.http import root, content_disposition
 from odoo.tests import tagged
 from odoo.tests.common import HOST, new_test_user, get_db_name, BaseCase
 from odoo.tools import parse_version
+from odoo.technology import utils as tech_utils
 from odoo.technology.utils import file_path
 from odoo.addons.test_http.controllers import CT_JSON
 
@@ -65,7 +66,7 @@ class TestHttpMisc(TestHttpBase):
 
     def test_misc2_local_redirect(self):
         def local_redirect(path):
-            fake_req = odoo.tools.misc.DotDict(db=False)
+            fake_req = tech_utils.DotDict(db=False)
             return odoo.technology.framework.Request.redirect(fake_req, path, local=True).headers['Location']
         self.assertEqual(local_redirect('https://www.example.com/hello?a=b'), '/hello?a=b')
         self.assertEqual(local_redirect('/hello?a=b'), '/hello?a=b')

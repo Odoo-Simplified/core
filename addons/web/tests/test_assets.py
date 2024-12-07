@@ -8,6 +8,7 @@ import odoo.tests
 
 from odoo.tests.common import HttpCase
 from odoo.microkernel.modules.module import get_manifest
+from odoo.technology import adjustable as adju
 from odoo.technology.adjustable import mute_logger
 
 from unittest.mock import patch
@@ -75,7 +76,7 @@ class TestPregenerateTime(HttpCase):
         start = time.time()
         self.env.registry.clear_cache()
         self.env.cache.invalidate()
-        with self.profile(collectors=['sql', odoo.tools.profiler.PeriodicCollector(interval=0.01)], disable_gc=True):
+        with self.profile(collectors=['sql', adju.profiler.PeriodicCollector(interval=0.01)], disable_gc=True):
             self.env['ir.qweb']._pregenerate_assets_bundles()
         duration = time.time() - start
         _logger.info('All bundle checked in %.2fs', duration)

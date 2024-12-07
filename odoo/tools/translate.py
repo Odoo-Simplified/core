@@ -1464,7 +1464,8 @@ class TranslationImporter:
                      the language must be present and activated in the database
         :param xmlids: if given, only translations for records with xmlid in xmlids will be loaded
         """
-        with suppress(FileNotFoundError), file_open(filepath, mode='rb', env=self.env) as fileobj:
+        temporary_paths = self.env.transaction._Transaction__file_open_tmp_paths if self.env else ()
+        with suppress(FileNotFoundError), file_open(filepath, mode='rb', temporary_paths=temporary_paths) as fileobj:
             _logger.info('loading base translation file %s for language %s', filepath, lang)
             fileformat = os.path.splitext(filepath)[-1][1:].lower()
             self.load(fileobj, fileformat, lang, xmlids=xmlids)
@@ -1717,7 +1718,8 @@ def get_po_paths(module_name: str, lang: str, env: odoo.api.Environment | None =
     ]
     for path in po_paths:
         with suppress(FileNotFoundError):
-            yield file_path(path, env=env)
+            temporary_paths = env.transaction._Transaction__file_open_tmp_paths if env else ()
+            yield file_path(path, temporary_paths=temporary_paths)
 
 
 class CodeTranslations:

@@ -1,14 +1,14 @@
 import odoo
-from odoo.technology.framework import http
-from odoo.technology.framework.http import request
 import odoo.exceptions
+from odoo.technology.framework import http, request
+from odoo.technology import utils as tech_utils
 
 
 class PosCustomerDisplay(http.Controller):
     @http.route("/pos_customer_display/<id_>/<access_token>", auth="public", type="http", website=True)
     def pos_customer_display(self, id_, access_token, **kw):
         pos_config_sudo = request.env["pos.config"].sudo().browse(int(id_))
-        if not odoo.tools.consteq(access_token, pos_config_sudo.access_token) or pos_config_sudo.customer_display_type == "none":
+        if not tech_utils.consteq(access_token, pos_config_sudo.access_token) or pos_config_sudo.customer_display_type == "none":
             raise odoo.exceptions.AccessDenied()
         return request.render(
             "point_of_sale.customer_display_index",

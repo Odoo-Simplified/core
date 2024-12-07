@@ -131,10 +131,12 @@ def _eval_xml(self, node, env):
 
         if node.get('file'):
             if t == 'base64':
-                with file_open(node.get('file'), 'rb', env=env) as f:
+                temporary_paths = env.transaction._Transaction__file_open_tmp_paths if env else ()
+                with file_open(node.get('file'), 'rb', temporary_paths=temporary_paths) as f:
                     return base64.b64encode(f.read())
-
-            with file_open(node.get('file'), env=env) as f:
+                
+            temporary_paths = env.transaction._Transaction__file_open_tmp_paths if env else ()
+            with file_open(node.get('file'), temporary_paths=temporary_paths) as f:
                 data = f.read()
         else:
             data = node.text or ''

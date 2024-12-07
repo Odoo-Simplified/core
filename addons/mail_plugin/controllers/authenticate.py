@@ -8,11 +8,11 @@ import json
 import logging
 import odoo
 import werkzeug
-
-from odoo import _
-from odoo.technology.framework.http import request
 from werkzeug.exceptions import NotFound
 
+from odoo import _
+from odoo.technology import utils as tech_utils
+from odoo.technology.framework import request
 from odoo.technology.framework import http
 
 _logger = logging.getLogger(__name__)
@@ -86,7 +86,7 @@ class Authenticate(http.Controller):
         data, auth_code_signature = auth_code.split('.')
         data = base64.b64decode(data)
         auth_code_signature = base64.b64decode(auth_code_signature)
-        signature = odoo.tools.misc.hmac(request.env(su=True), 'mail_plugin', data).encode()
+        signature = tech_utils.hmac(request.env(su=True), 'mail_plugin', data).encode()
         if not hmac.compare_digest(auth_code_signature, signature):
             return None
 
@@ -111,7 +111,7 @@ class Authenticate(http.Controller):
             'uid': request.uid,
         }
         auth_message = json.dumps(auth_dict, sort_keys=True).encode()
-        signature = odoo.tools.misc.hmac(request.env(su=True), 'mail_plugin', auth_message).encode()
+        signature = tech_utils.hmac(request.env(su=True), 'mail_plugin', auth_message).encode()
         auth_code = "%s.%s" % (base64.b64encode(auth_message).decode(), base64.b64encode(signature).decode())
         _logger.info('Auth code created - user %s, scope %s', request.env.user, scope)
         return auth_code

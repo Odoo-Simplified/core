@@ -274,8 +274,9 @@ class TestConfigManager(TransactionCase):
             config_path = f'{temp_dir}/save.conf'
             config = configmanager(fname=config_path)
             config._parse_config(['--config', config_path, '--save'])
-            with (file_open(config_path, env=self.env) as config_file,
-                  file_open('base/tests/config/save_posix.conf', env=self.env) as save_file):
+            temporary_paths = self.env.transaction._Transaction__file_open_tmp_paths if self.env else ()
+            with (file_open(config_path, temporary_paths=temporary_paths) as config_file,
+                  file_open('base/tests/config/save_posix.conf', temporary_paths=temporary_paths) as save_file):
                 config_content = config_file.read().rstrip()
                 save_content = save_file.read().format(
                     root_path=ROOT_PATH,

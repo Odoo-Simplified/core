@@ -24,7 +24,8 @@ def file_open_temporary_directory(env: Environment):
         >>> with odoo.tools.file_open_temporary_directory(self.env) as module_dir:
         ...    with zipfile.ZipFile('foo.zip', 'r') as z:
         ...        z.extract('foo/__manifest__.py', module_dir)
-        ...    with odoo.tools.file_open('foo/__manifest__.py', env=self.env) as f:
+        ...    temporary_paths = self.env.transaction._Transaction__file_open_tmp_paths
+        ...    with odoo.tools.file_open('foo/__manifest__.py', temporary_paths=temporary_paths) as f:
         ...        manifest = f.read()
 
     :param env: environment for which the temporary directory is created.

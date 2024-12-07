@@ -2,6 +2,7 @@ from collections.abc import Collection
 from collections.abc import Iterable, Iterator, Mapping, MutableMapping, MutableSet, Reversible
 import typing
 from functools import reduce, wraps
+import itertools
 
 #########################################################################
 #                       basic algorithm

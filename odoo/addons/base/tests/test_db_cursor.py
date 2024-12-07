@@ -11,9 +11,10 @@ from psycopg2.extensions import ISOLATION_LEVEL_REPEATABLE_READ
 import odoo
 from odoo.microkernel.modules.registry import Registry
 from odoo.technology.db import db_connect, TestCursor
+from odoo.technology.conf import config
 from odoo.tests import common
 from odoo.tests.common import BaseCase, HttpCase
-from odoo.tools.misc import config
+
 
 ADMIN_USER_ID = common.ADMIN_USER_ID
 

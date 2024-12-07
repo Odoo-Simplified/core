@@ -3,6 +3,7 @@
 
 import odoo
 import odoo.exceptions
+from ...utils import encrypt as _encrypt
 
 def check(db, uid, passwd, registry):
     res_users = registry(db)['res.users']
@@ -15,7 +16,7 @@ def compute_session_token(session, env):
 def check_session(session, env, request=None):
     self = env['res.users'].browse(session.uid)
     expected = self._compute_session_token(session.sid)
-    if expected and odoo.tools.misc.consteq(expected, session.session_token):
+    if expected and _encrypt.consteq(expected, session.session_token):
         if request:
             env['res.device.log']._update_device(request)
         return True

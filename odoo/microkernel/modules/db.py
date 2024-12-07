@@ -5,6 +5,7 @@ from psycopg2.extras import Json
 import logging
 from enum import IntEnum
 
+from odoo.technology import utils as tech_utils
 import odoo.microkernel.modules
 
 _logger = logging.getLogger(__name__)
@@ -26,13 +27,13 @@ def initialize(cr):
 
     """
     try:
-        f = odoo.tools.misc.file_path('base/data/base_data.sql')
+        f = tech_utils.file_path('base/data/base_data.sql')
     except FileNotFoundError:
         m = "File not found: 'base.sql' (provided by module 'base')."
         _logger.critical(m)
         raise IOError(m)
 
-    with odoo.tools.misc.file_open(f) as base_sql_file:
+    with tech_utils.file_open(f) as base_sql_file:
         cr.execute(base_sql_file.read())  # pylint: disable=sql-injection
 
     for i in odoo.microkernel.modules.get_modules():
